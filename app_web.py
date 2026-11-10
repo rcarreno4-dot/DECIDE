@@ -36,10 +36,16 @@ def login_usuario():
         return jsonify({}), 200
     datos = request.get_json() or {}
     nombre = datos.get("nombre", "").strip()[:40]
+    pin = str(datos.get("pin", "")).strip()
+    
     if not nombre:
         return jsonify({"error": "El nombre es obligatorio"}), 400
+    if not pin or len(pin) != 4 or not pin.isdigit():
+        return jsonify({"error": "Ingresa un PIN de 4 dígitos numéricos (ej. 1234) para proteger tu cuenta"}), 400
     
-    usuario_id = bd.crear_usuario(nombre)
+    usuario_id, error = bd.autenticar_o_registrar_usuario(nombre, pin)
+    if error:
+        return jsonify({"error": error}), 401
     puntos = bd.obtener_puntos(usuario_id)
     nivel, info_nivel = SistemaGamificacion.calcular_nivel(puntos)
     progreso, sig_nivel, icono_sig = SistemaGamificacion.obtener_progreso_nivel(puntos)

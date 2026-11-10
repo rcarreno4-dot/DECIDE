@@ -84,6 +84,13 @@ class InterfazDECIDEMejorada:
         entrada_nombre.pack(pady=5)
         entrada_nombre.focus()
         
+        # PIN de seguridad
+        label_pin = ttk.Label(frame_entrada, text="PIN de 4 dígitos (ej. 1234):", style="Normal.TLabel")
+        label_pin.pack(pady=(15, 5))
+        
+        entrada_pin = ttk.Entry(frame_entrada, width=10, font=("Arial", 12), show="•", justify="center")
+        entrada_pin.pack(pady=5)
+        
         def iniciar_sesion():
             nombre = entrada_nombre.get().strip()
             if not nombre:
@@ -91,7 +98,17 @@ class InterfazDECIDEMejorada:
                 return
             
             self.usuario_nombre = nombre
-            self.usuario_id = self.bd.crear_usuario(nombre)
+            pin = entrada_pin.get().strip()
+            if not pin or len(pin) != 4 or not pin.isdigit():
+                messagebox.showwarning("Advertencia", "Por favor ingresa un PIN numérico de 4 dígitos")
+                return
+            
+            usuario_id, error = self.bd.autenticar_o_registrar_usuario(nombre, pin)
+            if error:
+                messagebox.showerror("Aviso de cuenta", error)
+                return
+            
+            self.usuario_id = usuario_id
             self.mostrar_menu_principal()
         
         # Botón iniciar

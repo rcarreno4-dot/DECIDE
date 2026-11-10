@@ -54,6 +54,12 @@ class BaseDatos:
                 )
             """)
             
+            # Asegurar columna pin en tabla usuarios
+            cursor.execute("PRAGMA table_info(usuarios)")
+            columnas = [col[1] for col in cursor.fetchall()]
+            if "pin" not in columnas:
+                cursor.execute("ALTER TABLE usuarios ADD COLUMN pin TEXT DEFAULT ''")
+            
             # Tabla de puntos
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS puntos (
@@ -70,6 +76,59 @@ class BaseDatos:
             conn.close()
         except sqlite3.Error as e:
             print(f"Error inicializando BD: {e}")
+    
+    @staticmethod
+    def _hashear_pin(pin):
+        """Genera un hash SHA-256 seguro para el PIN"""
+        if not pin:
+            return ""
+        import hashlib
+        return hashlib.sha256(str(pin).strip().encode()).hexdigest()
+    
+    def autenticar_o_registrar_usuario(self, nombre, pin):
+        """
+        Autentica un usuario con su PIN o lo registra si no existe.
+        Retorna (usuario_id, mensaje_error)
+        """
+        nombre = nombre.strip()
+        pin = str(pin).strip()
+        pin_hash = self._hashear_pin(pin)
+        
+        try:
+            conn = sqlite3.connect(self.archivo_db)
+            cursor = conn.cursor()
+            
+            cursor.execute("SELECT id, pin FROM usuarios WHERE LOWER(nombre) = LOWER(?)", (nombre,))
+            row = cursor.fetchone()
+            
+            if row:
+                user_id, stored_pin = row[0], row[1]
+                # Si el usuario ya existía sin PIN registrado (usuario legado), asociar este nuevo PIN
+                if not stored_pin:
+                    cursor.execute("UPDATE usuarios SET pin = ? WHERE id = ?", (pin_hash, user_id))
+                    conn.commit()
+                    conn.close()
+                    return user_id, None
+                
+                # Si el PIN coincide
+                if stored_pin == pin_hash:
+                    conn.close()
+                    return user_id, None
+                
+                # PIN incorrecto
+                conn.close()
+                return None, f"El nombre '{nombre}' ya está registrado con otro PIN. Si eres tú, verifica tu PIN. Si eres otro participante, añade tu apellido o alias (ej. '{nombre} Pérez' o '{nombre}2')."
+            
+            # Si el usuario no existe, crearlo con su PIN
+            cursor.execute("INSERT INTO usuarios (nombre, pin) VALUES (?, ?)", (nombre, pin_hash))
+            usuario_id = cursor.lastrowid
+            cursor.execute("INSERT INTO puntos (usuario_id, total_puntos) VALUES (?, 0)", (usuario_id,))
+            conn.commit()
+            conn.close()
+            return usuario_id, None
+            
+        except sqlite3.Error as e:
+            return None, f"Error en base de datos: {e}"
     
     def crear_usuario(self, nombre):
         """Crea un nuevo usuario"""
