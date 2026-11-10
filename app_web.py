@@ -35,7 +35,7 @@ def login_usuario():
     if request.method == "OPTIONS":
         return jsonify({}), 200
     datos = request.get_json() or {}
-    nombre = datos.get("nombre", "").strip()
+    nombre = datos.get("nombre", "").strip()[:40]
     if not nombre:
         return jsonify({"error": "El nombre es obligatorio"}), 400
     
@@ -198,6 +198,18 @@ def servir_frontend(path):
     return jsonify({
         "mensaje": "Servidor backend de DECIDE activo."
     })
+
+@app.errorhandler(404)
+def no_encontrado(e):
+    # Si es ruta de API, responder JSON
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "Recurso no encontrado"}), 404
+    # Si no, redirigir a frontend
+    return servir_frontend("")
+
+@app.errorhandler(500)
+def error_servidor(e):
+    return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

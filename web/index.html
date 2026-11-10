@@ -96,6 +96,27 @@
       border-color: rgba(49, 136, 252, 0.4);
       transform: translateY(-2px);
     }
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+      }
+      header, footer, button, .no-print {
+        display: none !important;
+      }
+      .glass-panel, .glass-card {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        color: #0f172a !important;
+      }
+      .text-white {
+        color: #0f172a !important;
+      }
+      .text-slate-300, .text-slate-400 {
+        color: #334155 !important;
+      }
+    }
   </style>
 </head>
 <body class="selection:bg-brand-500 selection:text-white">
@@ -169,6 +190,103 @@
           </div>
           <div className={`mt-3 px-3 py-1 rounded-full text-xs font-bold border ${badgeBg}`}>
             {badgeText}
+          </div>
+        </div>
+      );
+    }
+
+    // Componente Radar / Spider Chart para las 9 competencias
+    function RadarChart({ resultados = {} }) {
+      const comps = Object.values(resultados);
+      if (comps.length === 0) return null;
+
+      const size = 320;
+      const center = size / 2;
+      const maxR = 95;
+      const total = comps.length;
+
+      const points = comps.map((c, i) => {
+        const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+        const r = ((c.puntuacion_normalizada || 0) / 100) * maxR;
+        const x = center + r * Math.cos(angle);
+        const y = center + r * Math.sin(angle);
+        return `${x},${y}`;
+      }).join(' ');
+
+      const levels = [0.2, 0.4, 0.6, 0.8, 1.0];
+
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
+            {levels.map((lvl, idx) => (
+              <polygon
+                key={idx}
+                points={Array.from({ length: total }).map((_, i) => {
+                  const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+                  const x = center + (maxR * lvl) * Math.cos(angle);
+                  const y = center + (maxR * lvl) * Math.sin(angle);
+                  return `${x},${y}`;
+                }).join(' ')}
+                fill="none"
+                stroke="rgba(148, 163, 184, 0.18)"
+                strokeWidth="1"
+              />
+            ))}
+
+            {comps.map((_, i) => {
+              const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+              const x = center + maxR * Math.cos(angle);
+              const y = center + maxR * Math.sin(angle);
+              return (
+                <line
+                  key={i}
+                  x1={center}
+                  y1={center}
+                  x2={x}
+                  y2={y}
+                  stroke="rgba(148, 163, 184, 0.22)"
+                  strokeWidth="1"
+                />
+              );
+            })}
+
+            <polygon
+              points={points}
+              fill="rgba(49, 136, 252, 0.35)"
+              stroke="#3188fc"
+              strokeWidth="2.5"
+            />
+
+            {comps.map((c, i) => {
+              const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+              const r = ((c.puntuacion_normalizada || 0) / 100) * maxR;
+              const x = center + r * Math.cos(angle);
+              const y = center + r * Math.sin(angle);
+              
+              const lx = center + (maxR + 24) * Math.cos(angle);
+              const ly = center + (maxR + 24) * Math.sin(angle);
+              const label = (c.nombre || '').split(' ')[0] || '';
+
+              return (
+                <g key={i}>
+                  <circle cx={x} cy={y} r="4" fill="#3188fc" stroke="#ffffff" strokeWidth="1.5" />
+                  <text
+                    x={lx}
+                    y={ly}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fill="#94a3b8"
+                    fontSize="10"
+                    fontWeight="700"
+                  >
+                    {label}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+          <div className="text-[11px] text-slate-400 font-bold mt-2">
+            🕸️ Perfil Radar de 9 Competencias
           </div>
         </div>
       );
@@ -744,19 +862,33 @@
                       <div className="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
                         <button
                           onClick={() => setVista('recomendaciones')}
-                          className="py-3 px-5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition-all"
+                          className="py-3 px-5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition-all no-print"
                         >
                           💡 Ver Recomendaciones y Plan de Acción →
                         </button>
                         <button
+                          onClick={() => window.print()}
+                          className="py-3 px-4 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-semibold no-print"
+                          title="Imprimir o guardar en PDF"
+                        >
+                          🖨️ Guardar PDF
+                        </button>
+                        <button
                           onClick={() => setVista('dashboard')}
-                          className="py-3 px-4 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold"
+                          className="py-3 px-4 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold no-print"
                         >
                           Volver al Inicio
                         </button>
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Radar Visual */}
+                <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+                  <h3 className="text-sm font-bold text-white mb-2">Mapa Radar de Competencias Socioemocionales</h3>
+                  <p className="text-xs text-slate-400 mb-4 text-center">Visualización poligonal multidimensional de las 9 dimensiones analizadas</p>
+                  <RadarChart resultados={resultadoData.resultados} />
                 </div>
 
                 <div>
