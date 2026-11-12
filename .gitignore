@@ -18,6 +18,7 @@ build/
 dist/
 *.exe
 *.spec
+*.zip
 
 # Sistema y editores
 .DS_Store
