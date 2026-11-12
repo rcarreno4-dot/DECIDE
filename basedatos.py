@@ -60,6 +60,12 @@ class BaseDatos:
             if "pin" not in columnas:
                 cursor.execute("ALTER TABLE usuarios ADD COLUMN pin TEXT DEFAULT ''")
             
+            # Asegurar columna reflexion_personal en tabla evaluaciones
+            cursor.execute("PRAGMA table_info(evaluaciones)")
+            columnas_eval = [col[1] for col in cursor.fetchall()]
+            if "reflexion_personal" not in columnas_eval:
+                cursor.execute("ALTER TABLE evaluaciones ADD COLUMN reflexion_personal TEXT DEFAULT ''")
+            
             # Tabla de puntos
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS puntos (
@@ -163,7 +169,7 @@ class BaseDatos:
             print(f"Error obteniendo usuario: {e}")
             return None
     
-    def guardar_evaluacion(self, usuario_id, resultados, puntuacion_general):
+    def guardar_evaluacion(self, usuario_id, resultados, puntuacion_general, reflexion_personal=""):
         """Guarda los resultados de una evaluación"""
         try:
             conn = sqlite3.connect(self.archivo_db)
@@ -172,9 +178,10 @@ class BaseDatos:
             resultados_json = json.dumps(resultados, ensure_ascii=False)
             
             cursor.execute("""
-                INSERT INTO evaluaciones (usuario_id, resultados, puntuacion_general)
-                VALUES (?, ?, ?)
-            """, (usuario_id, resultados_json, puntuacion_general))
+                INSERT INTO evaluaciones (usuario_id, resultados, puntuacion_general, reflexion_personal)
+                VALUES (?, ?, ?, ?)
+            """, (usuario_id, resultados_json, puntuacion_general, reflexion_personal))
+            evaluacion_id = cursor.lastrowid
             
             conn.commit()
             conn.close()
@@ -182,9 +189,22 @@ class BaseDatos:
             # Agregar puntos
             self.agregar_puntos(usuario_id, 100)
             
-            return True
+            return True, evaluacion_id
         except sqlite3.Error as e:
             print(f"Error guardando evaluación: {e}")
+            return False, None
+
+    def actualizar_reflexion(self, evaluacion_id, reflexion_personal):
+        """Actualiza la reflexión personal de una evaluación existente"""
+        try:
+            conn = sqlite3.connect(self.archivo_db)
+            cursor = conn.cursor()
+            cursor.execute("UPDATE evaluaciones SET reflexion_personal = ? WHERE id = ?", (reflexion_personal, evaluacion_id))
+            conn.commit()
+            conn.close()
+            return True
+        except sqlite3.Error as e:
+            print(f"Error actualizando reflexión: {e}")
             return False
     
     def obtener_evaluaciones(self, usuario_id):
@@ -194,7 +214,7 @@ class BaseDatos:
             cursor = conn.cursor()
             
             cursor.execute("""
-                SELECT id, fecha_evaluacion, resultados, puntuacion_general
+                SELECT id, fecha_evaluacion, resultados, puntuacion_general, reflexion_personal
                 FROM evaluaciones
                 WHERE usuario_id = ?
                 ORDER BY fecha_evaluacion DESC
@@ -206,7 +226,8 @@ class BaseDatos:
                     "id": row[0],
                     "fecha": row[1],
                     "resultados": json.loads(row[2]),
-                    "puntuacion_general": row[3]
+                    "puntuacion_general": row[3],
+                    "reflexion_personal": row[4] if len(row) > 4 and row[4] else ""
                 })
             
             conn.close()

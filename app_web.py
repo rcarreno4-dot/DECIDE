@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from basedatos import BaseDatos
 from evaluador import Evaluador
 from situaciones import obtener_situaciones
-from competencias import obtener_competencias
+from competencias import obtener_competencias, obtener_pilares, calcular_analisis_pilares
 from gamificacion import SistemaGamificacion
 from recomendaciones import generar_recomendaciones, generar_plan_desarrollo, calcular_proximos_pasos
 from resultados import calcular_puntuacion_general
@@ -98,7 +98,11 @@ def procesar_evaluacion():
     puntuacion_general = calcular_puntuacion_general(resultados)
     
     # Persistir en base de datos
-    bd.guardar_evaluacion(usuario_id, resultados, puntuacion_general)
+    reflexion_personal = datos.get("reflexion_personal", "").strip()
+    _, evaluacion_id = bd.guardar_evaluacion(usuario_id, resultados, puntuacion_general, reflexion_personal)
+    
+    # Análisis de los 2 Pilares Académicos (Habilidades Sociales y Resolución de Conflictos)
+    analisis_pilares = calcular_analisis_pilares(resultados)
     
     # Comprobar logros desbloqueados
     historial = bd.obtener_evaluaciones(usuario_id)
@@ -129,6 +133,9 @@ def procesar_evaluacion():
     progreso, sig_nivel, icono_sig = SistemaGamificacion.obtener_progreso_nivel(puntos_actuales)
     
     return jsonify({
+        "evaluacion_id": evaluacion_id,
+        "reflexion_personal": reflexion_personal,
+        "analisis_pilares": analisis_pilares,
         "resultados": resultados,
         "puntuacion_general": puntuacion_general,
         "nuevos_logros": nuevos_logros_detalle,
@@ -183,6 +190,43 @@ def logros_usuario(usuario_id):
         },
         "logros": todos_los_logros,
         "total_desbloqueados": len(logros_bd)
+    })
+
+@app.route("/api/evaluacion/<int:evaluacion_id>/reflexion", methods=["POST", "OPTIONS"])
+def guardar_reflexion_evaluacion(evaluacion_id):
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+    datos = request.get_json() or {}
+    reflexion = datos.get("reflexion", "").strip()
+    if not reflexion:
+        return jsonify({"error": "La reflexión no puede estar vacía"}), 400
+    exito = bd.actualizar_reflexion(evaluacion_id, reflexion)
+    if exito:
+        return jsonify({"status": "ok", "mensaje": "Reflexión guardada exitosamente"})
+    return jsonify({"error": "No se pudo guardar la reflexión"}), 500
+
+@app.route("/api/instrumento/ficha-tecnica", methods=["GET"])
+def ficha_tecnica_instrumento():
+    return jsonify({
+        "titulo": "Instrumento Psicométrico Situacional DECIDE v2.0",
+        "fundamentacion_teorica": "Basado en el modelo de Inteligencia Emocional de Salovey & Mayer (1997), Daniel Goleman (1995) y la teoría de Resolución Pacífica de Conflictos de Fisher & Ury (Harvard Negotiation Project).",
+        "objetivo": "Evaluar y diagnosticar el nivel de desarrollo de 9 competencias socioemocionales clave mediante juicio situacional (Situational Judgement Test - SJT).",
+        "estructura": {
+            "total_reactivos": 16,
+            "categorias": ["Laboral", "Académico", "Relaciones Interpersonales", "Bajo Presión"],
+            "escalamiento": "Escala Likert multidimensional (1 a 5 pts) normalizada porcentualmente (0% a 100%).",
+            "pilares_evaluados": [
+                {
+                    "pilar": "Habilidades Sociales e Interacción con el Entorno",
+                    "competencias": ["Autoconocimiento", "Empatía", "Comunicación Asertiva", "Trabajo en Equipo"]
+                },
+                {
+                    "pilar": "Resolución Pacífica de Conflictos y Control Emocional",
+                    "competencias": ["Autorregulación", "Toma de Decisiones", "Tolerancia a la Frustración", "Manejo de Conflictos", "Resiliencia"]
+                }
+            ]
+        },
+        "cita_apa": "DECIDE Research Group. (2026). Instrumento Situacional de Evaluación de Competencias Emocionales y Resolución de Conflictos (Versión 2.0) [Software de evaluación psicométrica]. App DECIDE."
     })
 
 # Servir frontend estático compilado en producción

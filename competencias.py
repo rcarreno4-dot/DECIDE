@@ -57,3 +57,60 @@ def inicializar_puntuaciones():
     """Reinicia todas las puntuaciones a 0"""
     for comp in COMPETENCIAS.values():
         comp["puntuacion"] = 0
+
+
+PILARES_CURSO = {
+    "habilidades_sociales": {
+        "id": "habilidades_sociales",
+        "titulo": "Habilidades Sociales e Interacción con el Entorno",
+        "descripcion": "Competencias orientadas a la empatía, expresión asertiva, conexión interpersonal y colaboración colectiva.",
+        "icono": "🤝",
+        "competencias": ["autoconocimiento", "empatia", "comunicacion", "trabajo_equipo"]
+    },
+    "resolucion_conflictos": {
+        "id": "resolucion_conflictos",
+        "titulo": "Resolución Pacífica de Conflictos y Control Emocional",
+        "descripcion": "Competencias dirigidas a la regulación de impulsos, toma prudente de decisiones, superación de frustraciones y mediación pacífica.",
+        "icono": "⚔️",
+        "competencias": ["autorregulacion", "toma_decisiones", "tolerancia_frustracion", "manejo_conflictos", "resiliencia"]
+    }
+}
+
+def obtener_pilares():
+    """Retorna la estructura de pilares temáticos del curso"""
+    return PILARES_CURSO
+
+def calcular_analisis_pilares(resultados):
+    """Calcula el análisis cualitativo y cuantitativo para los 2 pilares académicos"""
+    if not resultados:
+        return {}
+    
+    analisis = {}
+    for pilar_key, pilar in PILARES_CURSO.items():
+        comps_pilar = [resultados[c]["puntuacion_normalizada"] for c in pilar["competencias"] if c in resultados]
+        promedio = round(sum(comps_pilar) / len(comps_pilar), 1) if comps_pilar else 0
+        
+        if promedio >= 75:
+            diagnostico = "Dominio sobresaliente en la interacción y madurez emocional. Capacidad natural para mediar y generar vínculos constructivos."
+            propuesta = "Continuar fortaleciendo el liderazgo empático y servir como facilitador o mediador en dinámicas grupales complejas."
+            estado = "Consolidado"
+        elif promedio >= 55:
+            diagnostico = "Desempeño adecuado con bases sólidas, pero con variabilidad en situaciones de alta presión o divergencia de opiniones."
+            propuesta = "Implementar pausas conscientes antes de emitir juicios y practicar la escucha activa sin interrumpir en escenarios de desacuerdo."
+            estado = "En Desarrollo Óptimo"
+        else:
+            diagnostico = "Área de oportunidad prioritaria. Se observa reactividad emocional o dificultades para exteriorizar necesidades con asertividad."
+            propuesta = "Adoptar técnicas de desescalamiento pacífico de conflictos, comunicación 'Yo' y entrenamiento en autorregulación fisiológica."
+            estado = "Requiere Fortalecimiento"
+
+        analisis[pilar_key] = {
+            "titulo": pilar["titulo"],
+            "icono": pilar["icono"],
+            "puntuacion": promedio,
+            "estado": estado,
+            "diagnostico": diagnostico,
+            "propuesta": propuesta,
+            "competencias_incluidas": [COMPETENCIAS[c]["nombre"] for c in pilar["competencias"] if c in COMPETENCIAS]
+        }
+        
+    return analisis
