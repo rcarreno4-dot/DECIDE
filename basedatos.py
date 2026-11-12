@@ -1,6 +1,7 @@
 # basedatos.py
 # Módulo para la persistencia de datos con SQLite
 
+import sys
 import sqlite3
 import json
 from datetime import datetime
@@ -11,7 +12,11 @@ class BaseDatos:
     
     def __init__(self, archivo_db=None):
         if archivo_db is None:
-            archivo_db = str(Path(__file__).resolve().parent / "decide_datos.db")
+            if getattr(sys, 'frozen', False):
+                base_dir = Path(sys.executable).resolve().parent
+            else:
+                base_dir = Path(__file__).resolve().parent
+            archivo_db = str(base_dir / "decide_datos.db")
         self.archivo_db = archivo_db
         self.inicializar_bd()
     

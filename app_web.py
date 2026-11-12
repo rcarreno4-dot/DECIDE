@@ -2,6 +2,7 @@
 # Servidor web Flask y API REST para DECIDE con React + Tailwind + Bootstrap
 
 import os
+import sys
 from pathlib import Path
 from flask import Flask, request, jsonify, send_from_directory
 from basedatos import BaseDatos
@@ -12,7 +13,11 @@ from gamificacion import SistemaGamificacion
 from recomendaciones import generar_recomendaciones, generar_plan_desarrollo, calcular_proximos_pasos
 from resultados import calcular_puntuacion_general
 
-BASE_DIR = Path(__file__).resolve().parent
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    BASE_DIR = Path(sys._MEIPASS)
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+
 FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 
 app = Flask(__name__, static_folder=str(FRONTEND_DIST) if FRONTEND_DIST.exists() else None)
@@ -240,6 +245,8 @@ def servir_frontend(path):
         return send_from_directory(str(dist_dir), "index.html")
     
     web_dir = BASE_DIR / "web"
+    if not web_dir.exists() and getattr(sys, 'frozen', False):
+        web_dir = Path(sys.executable).resolve().parent / "web"
     if web_dir.exists():
         if path != "" and (web_dir / path).exists():
             return send_from_directory(str(web_dir), path)
