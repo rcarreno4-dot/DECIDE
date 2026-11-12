@@ -15,10 +15,10 @@ Para la entrega y sustentación formal ante el docente, el repositorio cuenta co
 
 | Recurso / Entregable | Formato | Descripción |
 | :--- | :--- | :--- |
-| **Documento del Trabajo de Semestre** | [`.docx`](PROYECTO_FINAL_DECIDE_v2_APA7.docx) / [`.md`](PROYECTO_FINAL_ESTRUCTURA_APA.md) | Informe académico formal en **Normas APA (7.ª Edición)** con las 11 fases de la rúbrica (Diagnóstico, Problema, Objetivos, Justificación, Bases Teóricas, Metodología, Análisis, Propuesta de Mejora, Reflexión y Referencias). |
-| **Manual de Usuario** | [`.docx`](MANUAL_DE_USUARIO_DECIDE_v2.docx) / [`.md`](MANUAL_DE_USUARIO.md) | Guía de operación paso a paso, instalación, pantallas, preguntas frecuentes y solución de problemas. |
-| **Guía de Sustentación Oral** | [`.md`](ESTRUCTURA_PRESENTACION_SUSTENTACION.md) | Guion cronometrado (10-12 min), checklist de recursos a mostrar y respuestas fundamentadas para posibles preguntas del docente. |
-| **Instalador Autónomo de Escritorio** | [`.exe`](Instalador_DECIDE_v2.exe) | Instalador independiente (29 MB) para cualquier computador Windows 10/11 sin necesidad de Python ni conexión a internet. |
+| **Documento del Trabajo de Semestre** | [`.docx`](1_DOCUMENTOS_ENTREGA/PROYECTO_FINAL_DECIDE_v2_APA7.docx) / [`.md`](1_DOCUMENTOS_ENTREGA/PROYECTO_FINAL_ESTRUCTURA_APA.md) | Informe académico formal en **Normas APA (7.ª Edición)** con las 11 fases de la rúbrica (Diagnóstico, Problema, Objetivos, Justificación, Bases Teóricas, Metodología, Análisis, Propuesta de Mejora, Reflexión y Referencias). |
+| **Manual de Usuario** | [`.docx`](1_DOCUMENTOS_ENTREGA/MANUAL_DE_USUARIO_DECIDE_v2.docx) / [`.md`](1_DOCUMENTOS_ENTREGA/MANUAL_DE_USUARIO.md) | Guía de operación paso a paso, instalación, pantallas, preguntas frecuentes y solución de problemas. |
+| **Guía de Sustentación Oral** | [`.md`](1_DOCUMENTOS_ENTREGA/ESTRUCTURA_PRESENTACION_SUSTENTACION.md) | Guion cronometrado (10-12 min), checklist de recursos a mostrar y respuestas fundamentadas para posibles preguntas del docente. |
+| **Instalador Autónomo de Escritorio** | [`.exe`](2_INSTALADOR_WINDOWS/Instalador_DECIDE_v2.exe) | Instalador independiente (29 MB) para cualquier computador Windows 10/11 sin necesidad de Python ni conexión a internet. |
 | **Aplicación Web / Código Fuente** | Python / React | Módulos Flask (`app_web.py`), base de datos SQLite (`basedatos.py`) e interfaz React 18 (`web/index.html`). |
 
 ---
