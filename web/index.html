@@ -453,11 +453,9 @@
 
     // App Principal
     function App() {
-      const [usuario, setUsuario] = useState(() => {
-        const guardado = localStorage.getItem('decide_usuario');
-        return guardado ? JSON.parse(guardado) : null;
-      });
-      const [vista, setVista] = useState(() => (usuario ? 'dashboard' : 'login'));
+      // Siempre iniciar limpio en la página principal
+      const [usuario, setUsuario] = useState(null);
+      const [vista, setVista] = useState('login');
       const [situaciones, setSituaciones] = useState([]);
       const [resultadoData, setResultadoData] = useState(null);
       const [nuevosLogros, setNuevosLogros] = useState([]);
@@ -469,22 +467,18 @@
       const [guardandoReflexion, setGuardandoReflexion] = useState(false);
       const [reflexionGuardada, setReflexionGuardada] = useState(false);
 
-      // Cargar situaciones
+      // Cargar situaciones y limpiar sesiones previas para siempre abrir en página principal
       useEffect(() => {
+        try {
+          localStorage.removeItem('decide_usuario');
+          sessionStorage.removeItem('decide_usuario');
+        } catch (e) {}
+
         fetch('/api/situaciones')
           .then(r => r.json())
           .then(data => setSituaciones(data))
           .catch(e => console.error(e));
       }, []);
-
-      // Persistir usuario
-      useEffect(() => {
-        if (usuario) {
-          localStorage.setItem('decide_usuario', JSON.stringify(usuario));
-        } else {
-          localStorage.removeItem('decide_usuario');
-        }
-      }, [usuario]);
 
       const handleLogin = async (e) => {
         e.preventDefault();
@@ -521,8 +515,14 @@
       const handleCerrarSesion = () => {
         setUsuario(null);
         setPinInput('');
+        setNombreInput('');
+        setTextoReflexion('');
         setVista('login');
         setResultadoData(null);
+        try {
+          localStorage.removeItem('decide_usuario');
+          sessionStorage.removeItem('decide_usuario');
+        } catch (e) {}
       };
 
       // Estado para la evaluación en curso
