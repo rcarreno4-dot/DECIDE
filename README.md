@@ -1,142 +1,91 @@
-# 🧠 DECIDE - Evaluador de Competencias Emocionales
+# 🧠 DECIDE v2.0 - Evaluación de Competencias Emocionales y Resolución de Conflictos
 
-Una aplicación interactiva completa para evaluar y desarrollar competencias emocionales mediante situaciones de toma de decisiones, gamificación y seguimiento personalizado.
+[![Licencia](https://img.shields.io/badge/Licencia-Educativa-blue.svg)](LICENSE)
+[![Normas APA](https://img.shields.io/badge/Formato-APA%207ma%20Edici%C3%B3n-green.svg)](PROYECTO_FINAL_DECIDE_v2_APA7.docx)
+[![Plataforma](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6.svg?logo=windows)](Instalador_DECIDE_v2.exe)
+[![Tecnología](https://img.shields.io/badge/Stack-React%2018%20%7C%20Tailwind%20%7C%20Flask-purple.svg)](web/index.html)
 
-## 📋 Características Principales
+**DECIDE v2.0** es una plataforma interactiva psicométrica basada en **Tests de Juicio Situacional (Situational Judgement Tests - SJT)** desarrollada para evaluar, diagnosticar y potenciar competencias socioemocionales, habilidades sociales y estrategias de resolución pacífica de conflictos en entornos académicos y profesionales.
 
-### Evaluación
-- ✅ **16 situaciones realistas** en múltiples categorías (laboral, académico, relaciones, presión)
-- ✅ Múltiples opciones de respuesta con puntuación diferenciada
-- ✅ Cálculo automático de 9 competencias emocionales
-- ✅ Perfil emocional personalizado con visualización en tiempo real
+---
 
-### Gamificación
-- ✅ **Sistema de puntos y niveles** (6 niveles: Novato → Maestro)
-- ✅ **12 logros desbloqueables** según desempeño
-- ✅ Barra de progreso hacia el siguiente nivel
-- ✅ Puntos por cada evaluación completada
+## 📂 Directorio de Entregables Principales del Proyecto
 
-### Persistencia y Seguimiento
-- ✅ **Base de datos SQLite** para guardar evaluaciones
-- ✅ Historial completo de evaluaciones
-- ✅ Comparación de resultados a lo largo del tiempo
-- ✅ Gestión de múltiples usuarios
+Para la entrega y sustentación formal ante el docente, el repositorio cuenta con los siguientes documentos y herramientas listos para su uso:
 
-### Recomendaciones Personalizadas
-- ✅ **Recomendaciones adaptadas** por competencia
-- ✅ Diferentes estrategias según nivel actual
-- ✅ Plan de desarrollo personalizado
-- ✅ Próximos pasos prioritarios
+| Recurso / Entregable | Formato | Descripción |
+| :--- | :--- | :--- |
+| **Documento del Trabajo de Semestre** | [`.docx`](PROYECTO_FINAL_DECIDE_v2_APA7.docx) / [`.md`](PROYECTO_FINAL_ESTRUCTURA_APA.md) | Informe académico formal en **Normas APA (7.ª Edición)** con las 11 fases de la rúbrica (Diagnóstico, Problema, Objetivos, Justificación, Bases Teóricas, Metodología, Análisis, Propuesta de Mejora, Reflexión y Referencias). |
+| **Manual de Usuario** | [`.docx`](MANUAL_DE_USUARIO_DECIDE_v2.docx) / [`.md`](MANUAL_DE_USUARIO.md) | Guía de operación paso a paso, instalación, pantallas, preguntas frecuentes y solución de problemas. |
+| **Guía de Sustentación Oral** | [`.md`](ESTRUCTURA_PRESENTACION_SUSTENTACION.md) | Guion cronometrado (10-12 min), checklist de recursos a mostrar y respuestas fundamentadas para posibles preguntas del docente. |
+| **Instalador Autónomo de Escritorio** | [`.exe`](Instalador_DECIDE_v2.exe) | Instalador independiente (29 MB) para cualquier computador Windows 10/11 sin necesidad de Python ni conexión a internet. |
+| **Aplicación Web / Código Fuente** | Python / React | Módulos Flask (`app_web.py`), base de datos SQLite (`basedatos.py`) e interfaz React 18 (`web/index.html`). |
 
-### Interfaz
-- ✅ Interfaz gráfica moderna con Tkinter
-- ✅ Sistema de login/registro de usuarios
-- ✅ Menú principal con múltiples opciones
-- ✅ Visualización intuitiva de resultados y logros
+---
 
-## 🎯 Competencias Evaluadas
+## 🎯 Competencias Evaluadas (9 Dimensiones Psicométricas)
 
-1. 🧠 Autoconocimiento
-2. 🧘 Autorregulación
-3. ❤️ Empatía
-4. 🗣️ Comunicación asertiva
-5. 🤝 Trabajo en equipo
-6. ⚡ Toma de decisiones
-7. 🔥 Tolerancia a la frustración
-8. ⚔️ Manejo de conflictos
-9. 💪 Resiliencia
+El instrumento evalúa 16 escenarios situacionales ponderados algorítmicamente (1 a 5 puntos) y los normaliza porcentualmente en:
 
-## 📁 Estructura del Proyecto
+1. 🧠 **Autoconocimiento:** Identificación de emociones propias y sus detonantes.
+2. 🧘 **Autorregulación:** Manejo de impulsos y contención de la reactividad.
+3. ❤️ **Empatía:** Comprensión y validación de las emociones ajenas.
+4. 🗣️ **Comunicación Asertiva:** Expresión clara y respetuosa de derechos e ideas.
+5. 🤝 **Trabajo en Equipo:** Cooperación priorizando el beneficio colectivo.
+6. ⚡ **Toma de Decisiones:** Análisis ponderado de consecuencias éticas y prácticas.
+7. 🔥 **Tolerancia a la Frustración:** Adaptación constructiva ante el error o el retraso.
+8. ⚔️ **Manejo de Conflictos:** Desescalamiento y aplicación de negociación ganar-ganar.
+9. 💪 **Resiliencia:** Capacidad de aprendizaje y recuperación frente a la adversidad.
 
-```
-AppCarlos/
-├── main.py                      # Punto de entrada
-├── interfaz_mejorada.py         # Interfaz gráfica mejorada
-├── interfaz.py                  # Interfaz gráfica básica (MVP)
-├── competencias.py              # Definición de competencias
-├── situaciones.py               # Banco de 16 situaciones
-├── evaluador.py                 # Motor de evaluación
-├── basedatos.py                 # Gestión de base de datos SQLite
-├── gamificacion.py              # Sistema de logros y niveles
-├── recomendaciones.py           # Generación de recomendaciones
-├── resultados.py                # Cálculo de resultados
-├── requirements.txt             # Dependencias
-├── decide_datos.db              # Base de datos SQLite (generado)
-└── README.md                    # Este archivo
-```
+---
 
-## 🚀 Instalación
+## 🏛️ Articulación Curricular (Clases 14ta, 15ta y 16ta)
 
-1. Clonar o descargar el proyecto
-2. Instalar dependencias (opcionalmente):
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Ejecutar:
-   ```bash
-   python main.py
-   ```
+Las 9 competencias se organizan en los dos macro-ejes temáticos del curso:
+- **Eje A: Habilidades Sociales e Interacción con el Entorno:** Fundamentado en la evolución histórica de las habilidades sociales (Salter, Wolpe, Bandura, Caballo) y su estructura conductual, cognitiva y fisiológica.
+- **Eje B: Resolución Pacífica de Conflictos Emocionales:** Fundamentado en el **Modelo de Negociación por Principios de Harvard (Fisher, Ury & Patton)** y la autorregulación fisiológica (Técnica STOP).
 
-## 🎮 Cómo Usar
+---
 
-### Primera vez
-1. Inicia la aplicación
-2. Ingresa tu nombre para crear una cuenta
-3. Selecciona "Nueva Evaluación"
-4. Responde las 16 situaciones honestamente
-5. Visualiza tu perfil emocional con recomendaciones
+## 🚀 Opciones de Ejecución
 
-### Menú Principal
-- **📝 Nueva Evaluación**: Realiza una nueva evaluación completa
-- **📊 Mis Resultados**: Ve el historial de todas tus evaluaciones
-- **🏆 Mis Logros**: Visualiza tus logros desbloqueados y nivel actual
-- **🚪 Cambiar Usuario**: Cambia de usuario
+### Opción 1: Con el Instalador Ejecutable (Para cualquier PC con Windows)
+1. Ejecutar **`Instalador_DECIDE_v2.exe`**.
+2. Presionar **"Instalar DECIDE v2.0"**.
+3. Se generará el acceso directo en el Escritorio y la aplicación se abrirá en `http://localhost:5000`.
 
-## 📊 Sistema de Niveles
-
-| Nivel | Nombre | Rango de Puntos | Icono |
-|-------|--------|-----------------|-------|
-| 0 | Novato | 0-99 | 🥚 |
-| 1 | Principiante | 100-299 | 🌱 |
-| 2 | Intermedio | 300-599 | 🌿 |
-| 3 | Avanzado | 600-999 | 🌳 |
-| 4 | Experto | 1000-1999 | 🏔️ |
-| 5 | Maestro | 2000+ | 👑 |
-
-## 🏆 Logros Disponibles
-
-- 🚀 Primer paso: Completa tu primera evaluación
-- 📚 Estudiante dedicado: Completa 5 evaluaciones
-- 🏆 Experto en autoconocimiento: Completa 10 evaluaciones
-- 🧠 Autoconsciente: Nivel alto en autoconocimiento
-- ❤️ Empático: Nivel alto en empatía
-- 🧘 Zen: Nivel alto en autorregulación
-- 🗣️ Comunicador: Nivel alto en comunicación asertiva
-- 🤝 Teamwork: Nivel alto en trabajo en equipo
-- ⚔️ Pacificador: Nivel alto en manejo de conflictos
-- 💪 Resiliente: Nivel alto en resiliencia
-- ⭐ Maestro emocional: Todas las competencias altas
-- 📈 Progresión: Mejora consistente entre evaluaciones
-
-## 📈 Fases del Proyecto
-
-**Fase 1 ✅ COMPLETADA**: Evaluación MVP + Tkinter  
-**Fase 2 ✅ COMPLETADA**: Gamificación + Seguimiento histórico  
-**Fase 3 ✅ COMPLETADA**: Base de datos SQLite + Sistema de usuarios  
-**Fase 4 ✅ COMPLETADA**: Recomendaciones avanzadas + Interfaz mejorada  
-**Fase 5 (Futura)**: Visualizaciones gráficas (Matplotlib/Plotly)  
-**Fase 6 (Futura)**: Sistema de administrador para crear situaciones  
-**Fase 7 ✅ COMPLETADA**: Aplicación web (Flask/React + Tailwind + Bootstrap + Animaciones)
-
-## 🌐 Edición Web Moderna (React + Tailwind + Bootstrap)
-
-Para ejecutar la versión web interactiva con animaciones fluidas, medidores SVG y confetti:
-
+### Opción 2: Desde el Código Fuente con Python
 ```bash
-# En terminal:
-python app_web.py
+# 1. Clonar el repositorio
+git clone https://github.com/rcarreno4-dot/DECIDE.git
+cd DECIDE
 
-# O con 1 clic:
-Doble clic en iniciar_web.bat
+# 2. Instalar dependencias mínimas
+pip install flask flask-cors
+
+# 3. Iniciar el lanzador con panel de control de escritorio
+python lanzador_app.py
 ```
-Abre en tu navegador: `http://localhost:5000`
+
+---
+
+## 📊 Sistema de Gamificación
+- **Puntos de Experiencia (XP):** 100 XP por cada evaluación situacional finalizada.
+- **6 Rangos Progresivos:** Novato 🥚 → Principiante 🌱 → Intermedio 🌿 → Avanzado 🌳 → Experto 🏔️ → Maestro 👑.
+- **12 Logros Desbloqueables:** Reconocimientos específicos al demostrar altos niveles de empatía, asertividad, resiliencia y mediación pacífica.
+
+---
+
+## 🛡️ Aspectos Éticos y Seguridad de Datos
+Cumpliendo con los estándares bioéticos de la **Ley 1090 de 2006** en Colombia para la evaluación psicosocial, el sistema incluye:
+- Autenticación por **PIN de 4 dígitos** por usuario.
+- Almacenamiento seguro en base de datos local SQLite (`decide_datos.db`).
+- Módulo de **Reflexión Personal** editable y persistente para la autoevaluación cualitativa.
+
+---
+
+## 👨‍💻 Autor y Créditos
+- **Autor:** Carlos Andrés Carreño
+- **Asignatura:** Inteligencia Emocional y Habilidades Sociales
+- **Fecha de Entrega:** Noviembre de 2026
+- **Repositorio GitHub:** [https://github.com/rcarreno4-dot/DECIDE](https://github.com/rcarreno4-dot/DECIDE)
